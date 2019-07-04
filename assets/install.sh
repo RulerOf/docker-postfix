@@ -96,15 +96,15 @@ fi
 # Enable TLS
 ############
 
-if [[ -n "$(find /etc/postfix/certs -iname *.crt)" && -n "$(find /etc/postfix/certs -iname *.key)" ]]; then
-  SMTPD_TLS_CERT_FILE=$(find /etc/postfix/certs -iname *.crt)
-  SMTPD_TLS_KEY_FILE=$(find /etc/postfix/certs -iname *.key)
+if [[ -n "$(find /etc/postfix/certs -iname '*.crt')" && -n "$(find /etc/postfix/certs -iname '*.key')" ]]; then
+  SMTPD_TLS_CERT_FILE=$(find /etc/postfix/certs -iname '*.crt')
+  SMTPD_TLS_KEY_FILE=$(find /etc/postfix/certs -iname '*.key')
 fi
 
 # for letsencrypt
-if [[ -n "$(find /etc/postfix/certs -iname *.pem)" ]]; then
-  SMTPD_TLS_CERT_FILE=$(find /etc/postfix/certs -iname *full*.pem)
-  SMTPD_TLS_KEY_FILE=$(find /etc/postfix/certs -iname *priv*.pem)
+if [[ -n "$(find /etc/postfix/certs -iname '*.pem')" ]]; then
+  SMTPD_TLS_CERT_FILE=$(find /etc/postfix/certs -iname '*full*.pem')
+  SMTPD_TLS_KEY_FILE=$(find /etc/postfix/certs -iname '*priv*.pem')
 fi
 
 if [[ "$SMTPD_TLS_CERT_FILE" != "" ]]; then
@@ -130,7 +130,7 @@ fi
 #  opendkim
 #############
 
-if [[ -z "$(find /etc/opendkim/domainkeys -iname *.private)" ]]; then
+if [[ -z "$(find /etc/opendkim/domainkeys -iname '*.private')" ]]; then
   exit 0
 fi
 cat >> /etc/supervisor/conf.d/supervisord.conf <<EOF
@@ -180,12 +180,12 @@ localhost
 *.$maildomain
 EOF
 cat >> /etc/opendkim/KeyTable <<EOF
-mail._domainkey.$maildomain $maildomain:mail:$(find /etc/opendkim/domainkeys -iname *.private)
+mail._domainkey.$maildomain $maildomain:mail:$(find /etc/opendkim/domainkeys -iname '*.private')
 EOF
 cat >> /etc/opendkim/SigningTable <<EOF
 *@$maildomain mail._domainkey.$maildomain
 EOF
 chown opendkim:opendkim /etc/opendkim/domainkeys
-chown opendkim:opendkim $(find /etc/opendkim/domainkeys -iname *.private)
+chown opendkim:opendkim $(find /etc/opendkim/domainkeys -iname '*.private')
 chmod 500 /etc/opendkim/domainkeys
-chmod 400 $(find /etc/opendkim/domainkeys -iname *.private)
+chmod 400 $(find /etc/opendkim/domainkeys -iname '*.private')
